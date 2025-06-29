@@ -1,37 +1,58 @@
 import os
+from enum import IntEnum
+from dataclasses import dataclass
+from typing import List, Dict
 from dotenv import load_dotenv
 
 load_dotenv()
 
-DB_USER = os.getenv("DB_USER", "postgres")
-DB_PASS = os.getenv("DB_PASS", "postgres")
-DB_HOST = os.getenv("DB_HOST", "localhost")
-DB_PORT = os.getenv("DB_PORT", "5432")
-DB_NAME = os.getenv("DB_NAME", "simulation_game")
+class ApprovalStatus(IntEnum):
+    TBD = 0
+    OK = 1
 
-DB_URL = f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+class SimulationType(Enum):
+    GAME_1 = "game_1"
+    GAME_2 = "game_2"
 
-# Game settings
-NUM_COMPANIES = 3
-NUM_INVESTORS = 3
+@dataclass
+class DatabaseConfig:
+    user: str = os.getenv("DB_USER", "postgres")
+    password: str = os.getenv("DB_PASS", "postgres")
+    host: str = os.getenv("DB_HOST", "localhost")
+    port: str = os.getenv("DB_PORT", "5432")
+    name: str = os.getenv("DB_NAME", "simulation_game")
+    
+    @property
+    def url(self) -> str:
+        return f"postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}"
 
-# Sample data
-SAMPLE_COMPANIES = [
-    {"name": "TechCorp", "price": 10.0, "shares": 1000},
-    {"name": "BioMed", "price": 15.0, "shares": 750},
-    {"name": "GreenEnergy", "price": 12.5, "shares": 500},
-]
+@dataclass
+class GameConfig:
+    max_companies: int = 5
+    max_investors: int = 5
+    max_shares: int = 10000
+    max_price: float = 1000.0
+    min_price: float = 1.0
 
-SAMPLE_INVESTORS = [
-    {"name": "Angel Fund"},
-    {"name": "Growth Capital"},
-    {"name": "Tech Ventures"},
-]
+@dataclass
+class DisplayConfig:
+    table_format: str = "grid"
+    max_name_length: int = 50
+    refresh_interval: float = 0.5
 
-# Status flags
-STATUS_OK = "OK"
-STATUS_TBD = "TBD"
-
-# Display settings
-TABLE_FORMAT = "grid"
-MAX_NAME_LENGTH = 50 
+class Config:
+    db = DatabaseConfig()
+    game = GameConfig()
+    display = DisplayConfig()
+    
+    sample_companies: List[Dict] = [
+        {"name": "TechCorp", "price": 10.0, "shares": 1000},
+        {"name": "BioMed", "price": 15.0, "shares": 750},
+        {"name": "GreenEnergy", "price": 12.5, "shares": 500},
+    ]
+    
+    sample_investors: List[Dict] = [
+        {"name": "Angel Fund"},
+        {"name": "Growth Capital"},
+        {"name": "Tech Ventures"},
+    ] 

@@ -1,4 +1,5 @@
 sqlalchemy>=2.0.0
 psycopg2-binary>=2.9.0  # PostgreSQL adapter
 tabulate>=0.9.0  # For pretty tables
-python-dotenv>=1.0.0  # For environment variables 
+python-dotenv>=1.0.0  # For environment variables
+typing-extensions>=4.0.0 

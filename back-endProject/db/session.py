@@ -1,20 +1,22 @@
 from contextlib import contextmanager
-from sqlalchemy.orm import sessionmaker
-from .schema import engine
-
-Session = sessionmaker(bind=engine)
+from typing import Generator
+from sqlalchemy.orm import Session
+from .schema import SessionLocal
 
 @contextmanager
-def get_session():
-    session = Session()
+def get_session() -> Generator[Session, None, None]:
+    session = SessionLocal()
     try:
         yield session
         session.commit()
-    except Exception as e:
+    except Exception:
         session.rollback()
-        raise e
+        raise
     finally:
         session.close()
+
+def get_db_session() -> Session:
+    return SessionLocal()
 
 # Quick test - remove later
 if __name__ == "__main__":
